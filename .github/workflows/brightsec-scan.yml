@@ -3,7 +3,7 @@ name: BrightSec Full Scan
 on:
   push:
     branches:
-      - main
+      - demo
 
 jobs:
   brightsec-full-scan:
@@ -11,45 +11,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Run a Bright Discovery
-        id: run_discovery
-        uses: NeuraLegion/run-discovery@v1.1
-        with:
-          api_token: ${{ secrets.BRIGHTSEC_TOKEN }} 
-          project_id: ${{ vars.PROJECT_ID }} 
-          hostname: ${{ vars.HOSTNAME }} 
-          auth_object_id: ${{ vars.AUTH_ID }} 
-          discovery_types: '[ "crawler"]' 
-          crawler_urls: '[ "https://brokencrystals.com"]' 
-          name: GitHub discovery ${{ github.sha }}
-          concurrency: 10 
-          interactions_depth: 3 
-          smart: true 
-         # restart_discovery_id: # optional
-          # file_id: # optional
-          # repeaters: # optional
-          # smart: # optional
-          # hosts_filter: # optional
-          # crawl_parent_subdomains: # optional
-          
-          
-      - name: Get the output discovery url
-        id: extract_id
-        run: |
-            url="${{ steps.run_discovery.outputs.url }}"
-            id="${url##*/}"
-            echo "Discovery ID is: $id"
-            echo "discovery_id=$id" >> $GITHUB_OUTPUT
-
-      - name: Wait for Bright discovery
-        id: wait_discovery
-        uses: NeuraLegion/wait-for-discovery@v1
-        with:
-          api_token: ${{ secrets.BRIGHTSEC_TOKEN }}
-          discovery_id: ${{ steps.extract_id.outputs.discovery_id }}
-          project_id: ${{ vars.PROJECT_ID }}
-          timeout: 3600
-          hostname: ${{ vars.HOSTNAME }}
   
       - name: List Project Entrypoints
         id: entrypoints
