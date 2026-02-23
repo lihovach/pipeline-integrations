@@ -26,8 +26,9 @@ jobs:
       - name: Save Entrypoints
         id: parse_entrypoints
         run: |
-          echo "entrypoints=${{ steps.entrypoints.outputs.entrypoints }}" >> $GITHUB_OUTPUT
-         
+            cat <<'EOF' >> $GITHUB_OUTPUT
+            entrypoints=${{ steps.entrypoints.outputs.entrypoints }}
+            EOF         
       - name: Run a Bright Security Scan
         id: run_scan
         uses: NeuraLegion/run-scan@v1.3
@@ -36,7 +37,7 @@ jobs:
           project_id: ${{ vars.PROJECT_ID }}
           hostname: ${{ vars.HOSTNAME }}
           name: Scan ${{ github.sha }}
-          entrypoints: ${{ steps.parse_entrypoints.outputs.entrypoints }}
+          entrypoints: ${{ steps.entrypoints.outputs.entrypoints }}
           module: "dast"
           tests: '["amazon_s3_takeover","jwt","broken_saml_auth","brute_force_login","common_files","cookie_security","csrf","xss","css_injection","default_login_location","directory_listing","email_injection","file_upload","full_path_disclosure","graphql_introspection","header_security","html_injection","http_method_fuzzing","iframe_injection","improper_asset_management","insecure_tls_configuration","ldapi","lfi","nosql","open_cloud_storage","open_database","osi","proto_pollution","rfi","secret_tokens","ssti","server_side_js_injection","ssrf","sqli","stored_xss","unvalidated_redirect","version_control_systems","wordpress","xxe","xpathi","bopla","business_constraint_bypass","date_manipulation","excessive_data_exposure","id_enumeration","cve_test","retire_js"]'
           # restart_scan: # optional
