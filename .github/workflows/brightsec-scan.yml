@@ -22,13 +22,7 @@ jobs:
           limit: 50
           connectivity: ok,unreachable
           status: new,vulnerable
-
-      - name: Save Entrypoints
-        id: parse_entrypoints
-        run: |
-            cat <<'EOF' >> $GITHUB_OUTPUT
-            entrypoints=${{ steps.entrypoints.outputs.entrypoints }}
-            EOF         
+    
       - name: Run a Bright Security Scan
         id: run_scan
         uses: NeuraLegion/run-scan@v1.3
